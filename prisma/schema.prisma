@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  // provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String                @id @default(uuid())
+  email               String                @unique
+  name                String
+  password            String
+  createdAt           DateTime              @default(now())
+  WorkspacePermission WorkspacePermission[]
+}
+
+model WorkspacePermission {
+  id           String    @id @default(uuid())
+  user_id      String
+  user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  workspace_id String
+  workspace    Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+}
+
+model Workspace {
+  id                  String                @id @default(uuid())
+  name                String
+  url                 String
+  apiKey              String
+  WorkspacePermission WorkspacePermission[]
+}
+
+model Sprint {
+  id        String   @id @default(uuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+}
+
+model task {
+  id                     String @id @default(uuid())
+  name                   String
+  estimatedDevPoint      Int
+  estimatedTestPoint     Int
+  estimatedDevTimeTaken  Int
+  estimatedTestTimeTaken Int
+  status                 Int
+  category               Int
+}
